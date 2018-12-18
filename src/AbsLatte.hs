@@ -7,27 +7,29 @@ module AbsLatte where
 
 
 
-newtype Ident = Ident String deriving (Eq, Ord, Show, Read)
-newtype UIdent = UIdent String deriving (Eq, Ord, Show, Read)
+newtype PIdent = PIdent ((Int,Int),String)
+  deriving (Eq, Ord, Show, Read)
+newtype PUIdent = PUIdent ((Int,Int),String)
+  deriving (Eq, Ord, Show, Read)
 data Program = Program [TopDef]
   deriving (Eq, Ord, Show, Read)
 
 data TopDef
-    = FnDef Type Ident [Arg] Block
+    = FnDef Type PIdent [Arg] Block
     | ClassDef ClassHeader [ClassField]
     | StructDef StructHeader [StructField]
   deriving (Eq, Ord, Show, Read)
 
-data Arg = Arg Type Ident
+data Arg = Arg Type PIdent
   deriving (Eq, Ord, Show, Read)
 
-data ClassHeader = ClassDec UIdent | ClassDecExt UIdent Type
+data ClassHeader = ClassDec PUIdent | ClassDecExt PUIdent Type
   deriving (Eq, Ord, Show, Read)
 
 data ClassField = ClassFieldVar Type [Item] | ClassFieldMeth TopDef
   deriving (Eq, Ord, Show, Read)
 
-data StructHeader = StructDec Ident
+data StructHeader = StructDec PIdent
   deriving (Eq, Ord, Show, Read)
 
 data StructField = StructField Type [Item]
@@ -40,21 +42,21 @@ data Stmt
     = Empty
     | BStmt Block
     | Decl Type [Item]
-    | Ass Ident Expr
-    | ArrAss Ident DimExpr Expr
-    | StructAss Ident Ident Expr
-    | Incr Ident
-    | Decr Ident
+    | Ass PIdent Expr
+    | ArrAss PIdent DimExpr Expr
+    | StructAss PIdent PIdent Expr
+    | Incr PIdent
+    | Decr PIdent
     | Ret Expr
     | VRet
     | Cond Expr Stmt
     | CondElse Expr Stmt Stmt
     | While Expr Stmt
-    | For Type Ident Ident Stmt
+    | For Type PIdent PIdent Stmt
     | SExp Expr
   deriving (Eq, Ord, Show, Read)
 
-data Item = NoInit Ident | Init Ident Expr
+data Item = NoInit PIdent | Init PIdent Expr
   deriving (Eq, Ord, Show, Read)
 
 data Type
@@ -63,26 +65,26 @@ data Type
     | Bool
     | Void
     | Arr Type
-    | Class UIdent
-    | Struct Ident
+    | Class PUIdent
+    | Struct PIdent
     | Fun Type [Type]
   deriving (Eq, Ord, Show, Read)
 
 data Expr
-    = EVar Ident
+    = EVar PIdent
     | ELitInt Integer
     | ELitTrue
     | ELitFalse
-    | EApp Ident [Expr]
-    | EAppMeth Ident Ident [Expr]
-    | EObjVar Ident Ident
+    | EApp PIdent [Expr]
+    | EAppMeth PIdent PIdent [Expr]
+    | EObjVar PIdent PIdent
     | ENewArr Type DimExpr
-    | ENewObj UIdent
-    | ENewSObj Ident
-    | EArrElem Ident DimExpr
+    | ENewObj PUIdent
+    | ENewSObj PIdent
+    | EArrElem PIdent DimExpr
     | EString String
-    | ENullSim Ident
-    | ENullCl UIdent
+    | ENullSim PIdent
+    | ENullCl PUIdent
     | Neg Expr
     | Not Expr
     | EMul Expr MulOp Expr

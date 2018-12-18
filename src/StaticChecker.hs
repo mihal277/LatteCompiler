@@ -12,7 +12,7 @@ import qualified Data.Map as Map
 import AbsLatte
 
 type Loc = Int
-type VarsEnv = Map.Map Ident Loc
+type VarsEnv = Map.Map PIdent Loc
 
 type Store = Map.Map Loc Type
 type Env = VarsEnv

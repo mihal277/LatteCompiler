@@ -9,34 +9,34 @@ type Result = Err String
 failure :: Show a => a -> Result
 failure x = Bad $ "Undefined case: " ++ show x
 
-transIdent :: Ident -> Result
-transIdent x = case x of
-  Ident string -> failure x
-transUIdent :: UIdent -> Result
-transUIdent x = case x of
-  UIdent string -> failure x
+transPIdent :: PIdent -> Result
+transPIdent x = case x of
+  PIdent string -> failure x
+transPUIdent :: PUIdent -> Result
+transPUIdent x = case x of
+  PUIdent string -> failure x
 transProgram :: Program -> Result
 transProgram x = case x of
   Program topdefs -> failure x
 transTopDef :: TopDef -> Result
 transTopDef x = case x of
-  FnDef type_ ident args block -> failure x
+  FnDef type_ pident args block -> failure x
   ClassDef classheader classfields -> failure x
   StructDef structheader structfields -> failure x
 transArg :: Arg -> Result
 transArg x = case x of
-  Arg type_ ident -> failure x
+  Arg type_ pident -> failure x
 transClassHeader :: ClassHeader -> Result
 transClassHeader x = case x of
-  ClassDec uident -> failure x
-  ClassDecExt uident type_ -> failure x
+  ClassDec puident -> failure x
+  ClassDecExt puident type_ -> failure x
 transClassField :: ClassField -> Result
 transClassField x = case x of
   ClassFieldVar type_ items -> failure x
   ClassFieldMeth topdef -> failure x
 transStructHeader :: StructHeader -> Result
 transStructHeader x = case x of
-  StructDec ident -> failure x
+  StructDec pident -> failure x
 transStructField :: StructField -> Result
 transStructField x = case x of
   StructField type_ items -> failure x
@@ -48,22 +48,22 @@ transStmt x = case x of
   Empty -> failure x
   BStmt block -> failure x
   Decl type_ items -> failure x
-  Ass ident expr -> failure x
-  ArrAss ident dimexpr expr -> failure x
-  StructAss ident1 ident2 expr -> failure x
-  Incr ident -> failure x
-  Decr ident -> failure x
+  Ass pident expr -> failure x
+  ArrAss pident dimexpr expr -> failure x
+  StructAss pident1 pident2 expr -> failure x
+  Incr pident -> failure x
+  Decr pident -> failure x
   Ret expr -> failure x
   VRet -> failure x
   Cond expr stmt -> failure x
   CondElse expr stmt1 stmt2 -> failure x
   While expr stmt -> failure x
-  For type_ ident1 ident2 stmt -> failure x
+  For type_ pident1 pident2 stmt -> failure x
   SExp expr -> failure x
 transItem :: Item -> Result
 transItem x = case x of
-  NoInit ident -> failure x
-  Init ident expr -> failure x
+  NoInit pident -> failure x
+  Init pident expr -> failure x
 transType :: Type -> Result
 transType x = case x of
   Int -> failure x
@@ -71,25 +71,25 @@ transType x = case x of
   Bool -> failure x
   Void -> failure x
   Arr type_ -> failure x
-  Class uident -> failure x
-  Struct ident -> failure x
+  Class puident -> failure x
+  Struct pident -> failure x
   Fun type_ types -> failure x
 transExpr :: Expr -> Result
 transExpr x = case x of
-  EVar ident -> failure x
+  EVar pident -> failure x
   ELitInt integer -> failure x
   ELitTrue -> failure x
   ELitFalse -> failure x
-  EApp ident exprs -> failure x
-  EAppMeth ident1 ident2 exprs -> failure x
-  EObjVar ident1 ident2 -> failure x
+  EApp pident exprs -> failure x
+  EAppMeth pident1 pident2 exprs -> failure x
+  EObjVar pident1 pident2 -> failure x
   ENewArr type_ dimexpr -> failure x
-  ENewObj uident -> failure x
-  ENewSObj ident -> failure x
-  EArrElem ident dimexpr -> failure x
+  ENewObj puident -> failure x
+  ENewSObj pident -> failure x
+  EArrElem pident dimexpr -> failure x
   EString string -> failure x
-  ENullSim ident -> failure x
-  ENullCl uident -> failure x
+  ENullSim pident -> failure x
+  ENullCl puident -> failure x
   Neg expr -> failure x
   Not expr -> failure x
   EMul expr1 mulop expr2 -> failure x
