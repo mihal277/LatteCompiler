@@ -12,9 +12,6 @@ failure x = Bad $ "Undefined case: " ++ show x
 transPIdent :: PIdent -> Result
 transPIdent x = case x of
   PIdent string -> failure x
-transPUIdent :: PUIdent -> Result
-transPUIdent x = case x of
-  PUIdent string -> failure x
 transProgram :: Program -> Result
 transProgram x = case x of
   Program topdefs -> failure x
@@ -22,24 +19,17 @@ transTopDef :: TopDef -> Result
 transTopDef x = case x of
   FnDef type_ pident args block -> failure x
   ClassDef classheader classfields -> failure x
-  StructDef structheader structfields -> failure x
 transArg :: Arg -> Result
 transArg x = case x of
   Arg type_ pident -> failure x
 transClassHeader :: ClassHeader -> Result
 transClassHeader x = case x of
-  ClassDec puident -> failure x
-  ClassDecExt puident type_ -> failure x
+  ClassDec pident -> failure x
+  ClassDecExt pident type_ -> failure x
 transClassField :: ClassField -> Result
 transClassField x = case x of
   ClassFieldVar type_ items -> failure x
-  ClassFieldMeth topdef -> failure x
-transStructHeader :: StructHeader -> Result
-transStructHeader x = case x of
-  StructDec pident -> failure x
-transStructField :: StructField -> Result
-transStructField x = case x of
-  StructField type_ items -> failure x
+  ClassFieldMeth type_ pident args block -> failure x
 transBlock :: Block -> Result
 transBlock x = case x of
   Block stmts -> failure x
@@ -50,7 +40,7 @@ transStmt x = case x of
   Decl type_ items -> failure x
   Ass pident expr -> failure x
   ArrAss pident dimexpr expr -> failure x
-  StructAss pident1 pident2 expr -> failure x
+  FieldAss pident1 pident2 expr -> failure x
   Incr pident -> failure x
   Decr pident -> failure x
   Ret expr -> failure x
@@ -71,8 +61,7 @@ transType x = case x of
   Bool -> failure x
   Void -> failure x
   Arr type_ -> failure x
-  Class puident -> failure x
-  Struct pident -> failure x
+  ClassType pident -> failure x
   Fun type_ types -> failure x
 transExpr :: Expr -> Result
 transExpr x = case x of
@@ -84,12 +73,10 @@ transExpr x = case x of
   EAppMeth pident1 pident2 exprs -> failure x
   EObjVar pident1 pident2 -> failure x
   ENewArr type_ dimexpr -> failure x
-  ENewObj puident -> failure x
-  ENewSObj pident -> failure x
+  ENewObj pident -> failure x
   EArrElem pident dimexpr -> failure x
   EString string -> failure x
-  ENullSim pident -> failure x
-  ENullCl puident -> failure x
+  ENull pident -> failure x
   Neg expr -> failure x
   Not expr -> failure x
   EMul expr1 mulop expr2 -> failure x

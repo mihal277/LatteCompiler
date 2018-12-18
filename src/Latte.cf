@@ -4,11 +4,9 @@ entrypoints Program ;
 
 Program.   Program ::= [TopDef] ;
 
-FnDef.	   TopDef ::= Type PIdent "(" [Arg] ")" Block ;
+FnDef.     TopDef ::= Type PIdent "(" [Arg] ")" Block ;
 
 ClassDef.  TopDef ::= ClassHeader "{" [ClassField] "}" ;
-
-StructDef.  TopDef ::= StructHeader "{" [StructField] "}" ;
 
 separator nonempty TopDef "" ;
 
@@ -18,23 +16,15 @@ separator  Arg "," ;
 
 -- classes -------------------------------------------------
 
-ClassDec.        ClassHeader ::= "class" PUIdent ;
+ClassDec.        ClassHeader ::= "class" PIdent ;
 
-ClassDecExt.     ClassHeader ::= "class" PUIdent "extends" Type ;
+ClassDecExt.     ClassHeader ::= "class" PIdent "extends" Type ;
 
 ClassFieldVar.   ClassField ::= Type [Item] ";" ; 
 
-ClassFieldMeth.  ClassField ::= TopDef ;
+ClassFieldMeth.  ClassField ::= Type PIdent "(" [Arg] ")" Block ;
 
 separator        ClassField "" ;
-
--- structs -------------------------------------------------
-
-StructDec.       StructHeader ::= "class" PIdent ;
-
-StructField.     StructField ::= Type [Item] ";" ; 
-
-separator        StructField "" ;
 
 -- statements ----------------------------------------------
 
@@ -58,7 +48,7 @@ Ass.       Stmt ::= PIdent "=" Expr  ";" ;
 
 ArrAss.    Stmt ::= PIdent DimExpr "=" Expr  ";" ;
 
-StructAss. Stmt ::= PIdent "." PIdent "=" Expr  ";" ;
+FieldAss.  Stmt ::= PIdent "." PIdent "=" Expr  ";" ;
 
 Incr.      Stmt ::= PIdent "++"  ";" ;
 
@@ -90,9 +80,7 @@ Void.      Type ::= "void" ;
 
 Arr.       Type ::= Type "[]" ;
 
-Class.     Type ::= PUIdent ;
-
-Struct.    Type ::= PIdent ;
+ClassType. Type ::= PIdent ;
 
 internal   Fun. Type ::= Type "(" [Type] ")" ;
 
@@ -116,17 +104,13 @@ EObjVar.   Expr6 ::= PIdent "." PIdent ;
 
 ENewArr.   Expr6 ::= "new" Type DimExpr;
 
-ENewObj.   Expr6 ::= "new" PUIdent;
-
-ENewSObj.  Expr6 ::= "new" PIdent;
+ENewObj.   Expr6 ::= "new" PIdent;
 
 EArrElem.  Expr6 ::= PIdent DimExpr;
 
 EString.   Expr6 ::= String ;
 
-ENullSim.  Expr6 ::= "(" PIdent ")null" ;
-
-ENullCl.   Expr6 ::= "(" PUIdent ")null" ;
+ENull.     Expr6 ::= "(" PIdent ")null" ;
 
 Neg.       Expr5 ::= "-" Expr6 ;
 
@@ -183,7 +167,3 @@ comment    "/*" "*/" ;
 -- tokens --------------------------------------------------
 
 position token PIdent (letter (letter | digit | '_')*) ;
-
-position token PUIdent (upper (letter | digit | '_')*) ;
-
-

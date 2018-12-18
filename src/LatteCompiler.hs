@@ -55,6 +55,7 @@ main = do
   latteCode <- readFile inputPath
   let parsingResult = pProgram $ myLexer latteCode
   programTree <- getProgramTree parsingResult
+  print programTree
   let staticCheckResult = performStaticCheck programTree
   validateStaticCheckResult staticCheckResult
   assemblyCode <- getAssembly programTree

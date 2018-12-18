@@ -107,12 +107,12 @@ alex_actions = array (0 :: Int, 11)
   , (5,alex_action_4)
   , (4,alex_action_4)
   , (3,alex_action_5)
-  , (2,alex_action_7)
-  , (1,alex_action_8)
-  , (0,alex_action_9)
+  , (2,alex_action_6)
+  , (1,alex_action_7)
+  , (0,alex_action_8)
   ]
 
-{-# LINE 42 "LexLatte.x" #-}
+{-# LINE 41 "LexLatte.x" #-}
 
 
 tok :: (Posn -> String -> Token) -> (Posn -> String -> Token)
@@ -129,7 +129,6 @@ data Tok =
  | TD !String         -- double precision float literals
  | TC !String         -- character literals
  | T_PIdent !String
- | T_PUIdent !String
 
  deriving (Eq,Show,Ord)
 
@@ -165,7 +164,6 @@ prToken t = case t of
   PT _ (TD s)   -> s
   PT _ (TC s)   -> s
   PT _ (T_PIdent s) -> s
-  PT _ (T_PUIdent s) -> s
 
 
 data BTree = N | B String Tok BTree BTree deriving (Show)
@@ -263,10 +261,9 @@ utf8Encode = map fromIntegral . go . ord
 
 alex_action_4 =  tok (\p s -> PT p (eitherResIdent (TV . share) s)) 
 alex_action_5 =  tok (\p s -> PT p (eitherResIdent (T_PIdent . share) s)) 
-alex_action_6 =  tok (\p s -> PT p (eitherResIdent (T_PUIdent . share) s)) 
-alex_action_7 =  tok (\p s -> PT p (eitherResIdent (TV . share) s)) 
-alex_action_8 =  tok (\p s -> PT p (TL $ share $ unescapeInitTail s)) 
-alex_action_9 =  tok (\p s -> PT p (TI $ share s))    
+alex_action_6 =  tok (\p s -> PT p (eitherResIdent (TV . share) s)) 
+alex_action_7 =  tok (\p s -> PT p (TL $ share $ unescapeInitTail s)) 
+alex_action_8 =  tok (\p s -> PT p (TI $ share s))    
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
 {-# LINE 1 "<built-in>" #-}

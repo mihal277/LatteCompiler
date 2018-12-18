@@ -9,30 +9,22 @@ module AbsLatte where
 
 newtype PIdent = PIdent ((Int,Int),String)
   deriving (Eq, Ord, Show, Read)
-newtype PUIdent = PUIdent ((Int,Int),String)
-  deriving (Eq, Ord, Show, Read)
 data Program = Program [TopDef]
   deriving (Eq, Ord, Show, Read)
 
 data TopDef
-    = FnDef Type PIdent [Arg] Block
-    | ClassDef ClassHeader [ClassField]
-    | StructDef StructHeader [StructField]
+    = FnDef Type PIdent [Arg] Block | ClassDef ClassHeader [ClassField]
   deriving (Eq, Ord, Show, Read)
 
 data Arg = Arg Type PIdent
   deriving (Eq, Ord, Show, Read)
 
-data ClassHeader = ClassDec PUIdent | ClassDecExt PUIdent Type
+data ClassHeader = ClassDec PIdent | ClassDecExt PIdent Type
   deriving (Eq, Ord, Show, Read)
 
-data ClassField = ClassFieldVar Type [Item] | ClassFieldMeth TopDef
-  deriving (Eq, Ord, Show, Read)
-
-data StructHeader = StructDec PIdent
-  deriving (Eq, Ord, Show, Read)
-
-data StructField = StructField Type [Item]
+data ClassField
+    = ClassFieldVar Type [Item]
+    | ClassFieldMeth Type PIdent [Arg] Block
   deriving (Eq, Ord, Show, Read)
 
 data Block = Block [Stmt]
@@ -44,7 +36,7 @@ data Stmt
     | Decl Type [Item]
     | Ass PIdent Expr
     | ArrAss PIdent DimExpr Expr
-    | StructAss PIdent PIdent Expr
+    | FieldAss PIdent PIdent Expr
     | Incr PIdent
     | Decr PIdent
     | Ret Expr
@@ -65,8 +57,7 @@ data Type
     | Bool
     | Void
     | Arr Type
-    | Class PUIdent
-    | Struct PIdent
+    | ClassType PIdent
     | Fun Type [Type]
   deriving (Eq, Ord, Show, Read)
 
@@ -79,12 +70,10 @@ data Expr
     | EAppMeth PIdent PIdent [Expr]
     | EObjVar PIdent PIdent
     | ENewArr Type DimExpr
-    | ENewObj PUIdent
-    | ENewSObj PIdent
+    | ENewObj PIdent
     | EArrElem PIdent DimExpr
     | EString String
-    | ENullSim PIdent
-    | ENullCl PUIdent
+    | ENull PIdent
     | Neg Expr
     | Not Expr
     | EMul Expr MulOp Expr

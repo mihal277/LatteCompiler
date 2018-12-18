@@ -60,7 +60,6 @@ import ErrM
 L_integ  { PT _ (TI $$) }
 L_quoted { PT _ (TL $$) }
 L_PIdent { PT _ (T_PIdent _) }
-L_PUIdent { PT _ (T_PUIdent _) }
 
 
 %%
@@ -68,14 +67,12 @@ L_PUIdent { PT _ (T_PUIdent _) }
 Integer :: { Integer } : L_integ  { (read ( $1)) :: Integer }
 String  :: { String }  : L_quoted {  $1 }
 PIdent    :: { PIdent} : L_PIdent { PIdent (mkPosToken $1)}
-PUIdent    :: { PUIdent} : L_PUIdent { PUIdent (mkPosToken $1)}
 
 Program :: { Program }
 Program : ListTopDef { AbsLatte.Program $1 }
 TopDef :: { TopDef }
 TopDef : Type PIdent '(' ListArg ')' Block { AbsLatte.FnDef $1 $2 $4 $6 }
        | ClassHeader '{' ListClassField '}' { AbsLatte.ClassDef $1 (reverse $3) }
-       | StructHeader '{' ListStructField '}' { AbsLatte.StructDef $1 (reverse $3) }
 ListTopDef :: { [TopDef] }
 ListTopDef : TopDef { (:[]) $1 } | TopDef ListTopDef { (:) $1 $2 }
 Arg :: { Arg }
@@ -85,21 +82,14 @@ ListArg : {- empty -} { [] }
         | Arg { (:[]) $1 }
         | Arg ',' ListArg { (:) $1 $3 }
 ClassHeader :: { ClassHeader }
-ClassHeader : 'class' PUIdent { AbsLatte.ClassDec $2 }
-            | 'class' PUIdent 'extends' Type { AbsLatte.ClassDecExt $2 $4 }
+ClassHeader : 'class' PIdent { AbsLatte.ClassDec $2 }
+            | 'class' PIdent 'extends' Type { AbsLatte.ClassDecExt $2 $4 }
 ClassField :: { ClassField }
 ClassField : Type ListItem ';' { AbsLatte.ClassFieldVar $1 $2 }
-           | TopDef { AbsLatte.ClassFieldMeth $1 }
+           | Type PIdent '(' ListArg ')' Block { AbsLatte.ClassFieldMeth $1 $2 $4 $6 }
 ListClassField :: { [ClassField] }
 ListClassField : {- empty -} { [] }
                | ListClassField ClassField { flip (:) $1 $2 }
-StructHeader :: { StructHeader }
-StructHeader : 'class' PIdent { AbsLatte.StructDec $2 }
-StructField :: { StructField }
-StructField : Type ListItem ';' { AbsLatte.StructField $1 $2 }
-ListStructField :: { [StructField] }
-ListStructField : {- empty -} { [] }
-                | ListStructField StructField { flip (:) $1 $2 }
 Block :: { Block }
 Block : '{' ListStmt '}' { AbsLatte.Block (reverse $2) }
 ListStmt :: { [Stmt] }
@@ -110,7 +100,7 @@ Stmt : ';' { AbsLatte.Empty }
      | Type ListItem ';' { AbsLatte.Decl $1 $2 }
      | PIdent '=' Expr ';' { AbsLatte.Ass $1 $3 }
      | PIdent DimExpr '=' Expr ';' { AbsLatte.ArrAss $1 $2 $4 }
-     | PIdent '.' PIdent '=' Expr ';' { AbsLatte.StructAss $1 $3 $5 }
+     | PIdent '.' PIdent '=' Expr ';' { AbsLatte.FieldAss $1 $3 $5 }
      | PIdent '++' ';' { AbsLatte.Incr $1 }
      | PIdent '--' ';' { AbsLatte.Decr $1 }
      | 'return' Expr ';' { AbsLatte.Ret $2 }
@@ -131,8 +121,7 @@ Type : 'int' { AbsLatte.Int }
      | 'boolean' { AbsLatte.Bool }
      | 'void' { AbsLatte.Void }
      | Type '[]' { AbsLatte.Arr $1 }
-     | PUIdent { AbsLatte.Class $1 }
-     | PIdent { AbsLatte.Struct $1 }
+     | PIdent { AbsLatte.ClassType $1 }
 ListType :: { [Type] }
 ListType : {- empty -} { [] }
          | Type { (:[]) $1 }
@@ -146,12 +135,10 @@ Expr6 : PIdent { AbsLatte.EVar $1 }
       | PIdent '.' PIdent '(' ListExpr ')' { AbsLatte.EAppMeth $1 $3 $5 }
       | PIdent '.' PIdent { AbsLatte.EObjVar $1 $3 }
       | 'new' Type DimExpr { AbsLatte.ENewArr $2 $3 }
-      | 'new' PUIdent { AbsLatte.ENewObj $2 }
-      | 'new' PIdent { AbsLatte.ENewSObj $2 }
+      | 'new' PIdent { AbsLatte.ENewObj $2 }
       | PIdent DimExpr { AbsLatte.EArrElem $1 $2 }
       | String { AbsLatte.EString $1 }
-      | '(' PIdent ')null' { AbsLatte.ENullSim $2 }
-      | '(' PUIdent ')null' { AbsLatte.ENullCl $2 }
+      | '(' PIdent ')null' { AbsLatte.ENull $2 }
       | '(' Expr ')' { $2 }
 Expr5 :: { Expr }
 Expr5 : '-' Expr6 { AbsLatte.Neg $2 }

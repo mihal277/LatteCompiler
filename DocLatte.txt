@@ -22,12 +22,8 @@ except ``"`` unless preceded by ``\``.
 
 
 
-
 PIdent literals are recognized by the regular expression
 `````letter (letter | digit | '_')*`````
-
-PUIdent literals are recognized by the regular expression
-`````upper (letter | digit | '_')*`````
 
 
 ===Reserved words and symbols===
@@ -61,23 +57,18 @@ All other symbols are terminals.
   | //Program// | -> | //[TopDef]// 
   | //TopDef// | -> | //Type// //PIdent// ``(`` //[Arg]// ``)`` //Block// 
   |  |  **|**  | //ClassHeader// ``{`` //[ClassField]// ``}`` 
-  |  |  **|**  | //StructHeader// ``{`` //[StructField]// ``}`` 
   | //[TopDef]// | -> | //TopDef// 
   |  |  **|**  | //TopDef// //[TopDef]// 
   | //Arg// | -> | //Type// //PIdent// 
   | //[Arg]// | -> | **eps**
   |  |  **|**  | //Arg// 
   |  |  **|**  | //Arg// ``,`` //[Arg]// 
-  | //ClassHeader// | -> | ``class`` //PUIdent// 
-  |  |  **|**  | ``class`` //PUIdent// ``extends`` //Type// 
+  | //ClassHeader// | -> | ``class`` //PIdent// 
+  |  |  **|**  | ``class`` //PIdent// ``extends`` //Type// 
   | //ClassField// | -> | //Type// //[Item]// ``;`` 
-  |  |  **|**  | //TopDef// 
+  |  |  **|**  | //Type// //PIdent// ``(`` //[Arg]// ``)`` //Block// 
   | //[ClassField]// | -> | **eps**
   |  |  **|**  | //ClassField// //[ClassField]// 
-  | //StructHeader// | -> | ``class`` //PIdent// 
-  | //StructField// | -> | //Type// //[Item]// ``;`` 
-  | //[StructField]// | -> | **eps**
-  |  |  **|**  | //StructField// //[StructField]// 
   | //Block// | -> | ``{`` //[Stmt]// ``}`` 
   | //[Stmt]// | -> | **eps**
   |  |  **|**  | //Stmt// //[Stmt]// 
@@ -105,7 +96,6 @@ All other symbols are terminals.
   |  |  **|**  | ``boolean`` 
   |  |  **|**  | ``void`` 
   |  |  **|**  | //Type// ``[]`` 
-  |  |  **|**  | //PUIdent// 
   |  |  **|**  | //PIdent// 
   | //[Type]// | -> | **eps**
   |  |  **|**  | //Type// 
@@ -118,12 +108,10 @@ All other symbols are terminals.
   |  |  **|**  | //PIdent// ``.`` //PIdent// ``(`` //[Expr]// ``)`` 
   |  |  **|**  | //PIdent// ``.`` //PIdent// 
   |  |  **|**  | ``new`` //Type// //DimExpr// 
-  |  |  **|**  | ``new`` //PUIdent// 
   |  |  **|**  | ``new`` //PIdent// 
   |  |  **|**  | //PIdent// //DimExpr// 
   |  |  **|**  | //String// 
   |  |  **|**  | ``(`` //PIdent// ``)null`` 
-  |  |  **|**  | ``(`` //PUIdent// ``)null`` 
   |  |  **|**  | ``(`` //Expr// ``)`` 
   | //Expr5// | -> | ``-`` //Expr6// 
   |  |  **|**  | ``!`` //Expr6// 
